@@ -156,6 +156,48 @@ class SchedulerTest {
         .verifyComplete();
   }
 
+  @Test
+  void flatMapParallel() {
+    //when
+    var value = Flux.fromIterable(nameList)
+        .flatMap(it -> Mono.just(it)
+            .map(SchedulerTest::getString)
+            .subscribeOn(Schedulers.boundedElastic()))
+        .log();
+
+    var value1 = Flux.fromIterable(nameList2)
+        .flatMap(it -> Mono.just(it)
+            .map(SchedulerTest::getString)
+            .subscribeOn(Schedulers.boundedElastic()))
+        .log();
+
+    //then
+    StepVerifier.create(value.mergeWith(value1))
+        .expectNextCount(6)
+        .verifyComplete();
+  }
+
+  @Test
+  void flatMapSequentialParallel() {
+    //when
+    var value = Flux.fromIterable(nameList)
+        .flatMapSequential(it -> Mono.just(it)
+            .map(SchedulerTest::getString)
+            .subscribeOn(Schedulers.boundedElastic()))
+        .log();
+
+    var value1 = Flux.fromIterable(nameList2)
+        .flatMapSequential(it -> Mono.just(it)
+            .map(SchedulerTest::getString)
+            .subscribeOn(Schedulers.boundedElastic()))
+        .log();
+
+    //then
+    StepVerifier.create(value.mergeWith(value1))
+        .expectNextCount(6)
+        .verifyComplete();
+  }
+
   /**
    * In this example, we use `subscribeOn(Schedulers.parallel())` to perform number processing on a parallel thread, which means the numbers
    * will be processed simultaneously on multiple threads. Then, we use `publishOn(Schedulers.single())` to publish the results on a

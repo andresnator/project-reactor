@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 import reactor.tools.agent.ReactorDebugAgent;
-
+/**
+ * This kind of Debug is recommended by productions environments
+ */
 class DebugReactorInitTest {
 
     @BeforeEach
